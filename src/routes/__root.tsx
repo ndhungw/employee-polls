@@ -1,38 +1,22 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { RootRouteWithContext } from "@/types/router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import { lazy } from "react";
 
-export const Route = createRootRoute({
+const TanStackRouterDevtools =
+  process.env.NODE_ENV === "production"
+    ? () => null // Render nothing in production
+    : lazy(() =>
+        // Lazy load in development
+        import("@tanstack/router-devtools").then((res) => ({
+          default: res.TanStackRouterDevtools,
+        })),
+      );
+
+export const Route = createRootRouteWithContext<RootRouteWithContext>()({
   component: () => (
     <>
-      <Layout>
-        <Outlet />
-      </Layout>
+      <Outlet />
       <TanStackRouterDevtools />
     </>
   ),
 });
-
-const AppBar = () => {
-  return (
-    <div className="p-2 flex gap-2">
-      <Link to="/" className="[&.active]:font-bold">
-        Home
-      </Link>{" "}
-      <Link to="/about" className="[&.active]:font-bold">
-        About
-      </Link>{" "}
-      <Link to="/login" className="[&.active]:font-bold">
-        Login
-      </Link>
-    </div>
-  );
-};
-
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <>
-      <AppBar />
-      {children}
-    </>
-  );
-};
