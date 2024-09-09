@@ -7,15 +7,41 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { fallbackPath } from "@/configs";
+import { toast } from "@/hooks/use-toast";
 import { sleep } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { getRouteApi, useRouter, useRouterState } from "@tanstack/react-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useAuthContext } from "../auth/AuthContext";
+import { User } from "../auth/type";
+import { getExistingUsers } from "./api/getExistingUsers";
 
 const Route = getRouteApi("/login");
+
+const FormSchema = z.object({
+  username: z.string({
+    required_error: "Please select an username to login.",
+  }),
+});
 
 export function LoginForm() {
   const auth = useAuthContext();
@@ -26,16 +52,17 @@ export function LoginForm() {
 
   const search = Route.useSearch();
 
-  const onFormSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
+  //#region Form
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  });
+  //#endregion Form
+
+  const onSubmit = async ({ username }: z.infer<typeof FormSchema>) => {
     setIsSubmitting(true);
     try {
-      evt.preventDefault();
-      const data = new FormData(evt.currentTarget);
-      const fieldValue = data.get("username");
-
-      if (!fieldValue) return;
-      const username = fieldValue.toString();
-      await auth.login({ username });
+      if (!username) return;
+      await auth.login({ username: username });
 
       await router.invalidate();
 
@@ -44,6 +71,14 @@ export function LoginForm() {
       await sleep(1000);
 
       await navigate({ to: search.redirect || fallbackPath });
+      toast({
+        title: "You submitted the following values:",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify({ username }, null, 2)}</code>
+          </pre>
+        ),
+      });
     } catch (error) {
       console.error("Error logging in: ", error);
     } finally {
@@ -53,35 +88,57 @@ export function LoginForm() {
 
   const isLoggingIn = isLoading || isSubmitting;
 
+  const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
+  const [existingUsers, setExistingUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    setLoadingUsers(true);
+    getExistingUsers()
+      .then(setExistingUsers)
+      .finally(() => setLoadingUsers(false));
+  }, []);
+
   return (
-    <form onSubmit={onFormSubmit}>
-      <fieldset disabled={isLoggingIn}>
-        <Card className="w-full max-w-sm">
-          <CardHeader>
-            <CardTitle className="text-2xl">Login</CardTitle>
-            <CardDescription>
-              Enter your email below to login to your account.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <fieldset disabled={loadingUsers || isLoggingIn}>
+          <Card className="w-full max-w-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl">Login</CardTitle>
+              <CardDescription>Enter your username below to login to your account.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <FormField
+                control={form.control}
                 name="username"
-                type="text"
-                placeholder="Enter username"
-                required
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a username to login" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {existingUsers.map((user) => (
+                          <SelectItem value={user.username}>{user.username}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button className="w-full" type="submit">
-              {isLoggingIn ? "Loading" : "Sign in"}
-            </Button>
-          </CardFooter>
-        </Card>
-      </fieldset>
-    </form>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full" type="submit">
+                {isLoggingIn ? "Loading..." : "Sign in"}
+              </Button>
+            </CardFooter>
+          </Card>
+        </fieldset>
+      </form>
+    </Form>
   );
 }

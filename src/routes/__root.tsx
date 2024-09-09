@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster";
 import { RootRouteWithContext } from "@/types/router";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { lazy } from "react";
@@ -9,13 +10,14 @@ const TanStackRouterDevtools =
         // Lazy load in development
         import("@tanstack/router-devtools").then((res) => ({
           default: res.TanStackRouterDevtools,
-        })),
+        }))
       );
 
 export const Route = createRootRouteWithContext<RootRouteWithContext>()({
   component: () => (
     <>
       <Outlet />
+      <Toaster />
       <TanStackRouterDevtools />
     </>
   ),
