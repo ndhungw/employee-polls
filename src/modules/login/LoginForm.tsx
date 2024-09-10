@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-// import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -26,14 +25,14 @@ import {
 import { fallbackPath } from "@/configs";
 import { toast } from "@/hooks/use-toast";
 import { sleep } from "@/lib/utils";
+import { User } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getRouteApi, useRouter, useRouterState } from "@tanstack/react-router";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAuthContext } from "../auth/AuthContext";
-import { User } from "../auth/type";
-import { getExistingUsers } from "./api/getExistingUsers";
+import { getExistingUsernames, getUserByUsername } from "../auth/api/getExistingUsers";
 
 const Route = getRouteApi("/login");
 
@@ -61,14 +60,20 @@ export function LoginForm() {
   const onSubmit = async ({ username }: z.infer<typeof FormSchema>) => {
     setIsSubmitting(true);
     try {
-      if (!username) return;
-      await auth.login({ username: username });
+      if (!username) {
+        return;
+      }
+      const user = await getUserByUsername(username);
+      if (!user) {
+        throw new Error();
+      }
 
+      await auth.login(user);
       await router.invalidate();
 
       // This is just a hack being used to wait for the auth state to update
       // in a real app, you'd want to use a more robust solution
-      await sleep(1000);
+      await sleep(1);
 
       await navigate({ to: search.redirect || fallbackPath });
       toast({
@@ -89,12 +94,12 @@ export function LoginForm() {
   const isLoggingIn = isLoading || isSubmitting;
 
   const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
-  const [existingUsers, setExistingUsers] = useState<User[]>([]);
+  const [existingUsernames, setExistingUsername] = useState<User["name"][]>([]);
 
   useEffect(() => {
     setLoadingUsers(true);
-    getExistingUsers()
-      .then(setExistingUsers)
+    getExistingUsernames()
+      .then(setExistingUsername)
       .finally(() => setLoadingUsers(false));
   }, []);
 
@@ -121,8 +126,10 @@ export function LoginForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {existingUsers.map((user) => (
-                          <SelectItem value={user.username}>{user.username}</SelectItem>
+                        {existingUsernames.map((username) => (
+                          <SelectItem key={username} value={username}>
+                            {username}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

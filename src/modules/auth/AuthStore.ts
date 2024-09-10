@@ -1,8 +1,8 @@
-import { User } from "./type";
+import { User } from "@/types/user";
 
 const key = "hungnd73.employee-polls-app.auth.user";
 
-export async function getStoredUser(): Promise<User | null> {
+export async function getStoredUserId(): Promise<User["name"] | null> {
   const dataStr = localStorage.getItem(key);
   if (dataStr) {
     return JSON.parse(dataStr);
@@ -11,9 +11,9 @@ export async function getStoredUser(): Promise<User | null> {
   return null;
 }
 
-export async function setStoredUser(user: User | null) {
-  if (user) {
-    localStorage.setItem(key, JSON.stringify(user));
+export async function setStoredUserId(userId: User["id"] | null) {
+  if (userId) {
+    localStorage.setItem(key, JSON.stringify(userId));
   } else {
     localStorage.removeItem(key);
   }

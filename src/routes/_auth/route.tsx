@@ -1,13 +1,9 @@
 import { sleep } from "@/lib/utils";
 import { useAuthContext } from "@/modules/auth/AuthContext";
-import { getStoredUser } from "@/modules/auth/AuthStore";
+import { getStoredUserId } from "@/modules/auth/AuthStore";
+import { getUserById } from "@/modules/auth/api/getExistingUsers";
 import AuthLayout from "@/modules/shared/layout/AuthLayout";
-import {
-  createFileRoute,
-  Outlet,
-  redirect,
-  useRouter,
-} from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect, useRouter } from "@tanstack/react-router";
 
 class UserNotFound extends Error {}
 
@@ -16,10 +12,12 @@ export const Route = createFileRoute("/_auth")({
     if (!context.auth.user) {
       try {
         // attempt to get stored user info
-        const user = await getStoredUser();
+        context.auth.setLoading(true);
+        const userId = await getStoredUserId();
+        const user = await getUserById(userId ?? "");
 
         // throw error if cannot find any
-        if (!user || !user.username) {
+        if (!user) {
           throw new UserNotFound();
         }
 
@@ -41,6 +39,8 @@ export const Route = createFileRoute("/_auth")({
             },
           });
         }
+      } finally {
+        context.auth.setLoading(false);
       }
     }
   },
@@ -58,7 +58,7 @@ function AuthRoute() {
         router
           .invalidate()
           .then(() => sleep(10))
-          .then(() => navigate({ to: "/" })),
+          .then(() => navigate({ to: "/" }))
       );
     }
   };

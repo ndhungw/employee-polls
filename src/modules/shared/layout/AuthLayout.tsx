@@ -69,14 +69,14 @@ const AuthLayout = ({
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                 {routes.map((route) => (
                   <Link
+                    key={route.path}
                     to={route.path}
                     className="flex items-center gap-3 rounded-lg px-3 py-2 transition-all"
                     activeProps={{
                       className: "bg-muted text-primary",
                     }}
                     inactiveProps={{
-                      className:
-                        "bg-transparent text-muted-foreground hover:text-primary",
+                      className: "bg-transparent text-muted-foreground hover:text-primary",
                     }}
                     activeOptions={{
                       exact: route.exact,
@@ -94,34 +94,27 @@ const AuthLayout = ({
           <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
             <Sheet open={openSheet} onOpenChange={setOpenSheet}>
               <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="shrink-0 md:hidden"
-                >
+                <Button variant="outline" size="icon" className="shrink-0 md:hidden">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="flex flex-col">
                 <nav className="grid gap-2 text-lg font-medium">
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2 text-lg font-semibold"
-                  >
+                  <Link href="#" className="flex items-center gap-2 text-lg font-semibold">
                     <Package2 className="h-6 w-6" />
                     <span className="sr-only">Employee Polls</span>
                   </Link>
                   {routes.map((route) => (
                     <Link
+                      key={route.path}
                       to={route.path}
                       className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                       activeProps={{
                         className: "bg-muted text-primary",
                       }}
                       inactiveProps={{
-                        className:
-                          "bg-transparent text-muted-foreground hover:text-primary",
+                        className: "bg-transparent text-muted-foreground hover:text-primary",
                       }}
                       activeOptions={{
                         exact: route.exact,
@@ -138,17 +131,13 @@ const AuthLayout = ({
             <div className="w-full flex-1"></div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full"
-                >
+                <Button variant="secondary" size="icon" className="rounded-full">
                   <CircleUser className="h-5 w-5" />
                   <span className="sr-only">Toggle user menu</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user?.username}</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
