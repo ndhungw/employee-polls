@@ -137,13 +137,13 @@ function generateUID() {
 
 export function _getUsers(): Promise<typeof users> {
   return new Promise((resolve) => {
-    setTimeout(() => resolve({ ...users }), 1000);
+    setTimeout(() => resolve({ ...users }), 500);
   });
 }
 
 export function _getQuestions(): Promise<typeof questions> {
   return new Promise((resolve) => {
-    setTimeout(() => resolve({ ...questions }), 1000);
+    setTimeout(() => resolve({ ...questions }), 500);
   });
 }
 
@@ -191,7 +191,7 @@ export function _saveQuestion(question: RawQuestion): Promise<Question> {
       };
 
       resolve(formattedQuestion);
-    }, 1000);
+    }, 500);
   });
 }
 
@@ -221,13 +221,19 @@ export function _saveQuestionAnswer({
         },
       };
 
+      const theOtherOneAnswer = answer !== "optionOne" ? "optionOne" : "optionTwo";
+
       questions = {
         ...questions,
         [qid]: {
           ...questions[qid],
           [answer]: {
             ...questions[qid][answer],
-            votes: questions[qid][answer].votes.concat([authedUser]),
+            votes: [...new Set(questions[qid][answer].votes.concat([authedUser]))],
+          },
+          [theOtherOneAnswer]: {
+            ...questions[qid][theOtherOneAnswer],
+            votes: questions[qid][theOtherOneAnswer].votes.filter((user) => user !== authedUser),
           },
         },
       };
@@ -236,3 +242,59 @@ export function _saveQuestionAnswer({
     }, 500);
   });
 }
+
+//#region
+export async function getUsers() {
+  const usersMap = await _getUsers();
+  return Object.entries(usersMap).map(([_, user]) => user);
+}
+
+export async function getExistingUsernames(): Promise<User["name"][]> {
+  const users = await getUsers();
+  return users.map((user) => user.name);
+}
+
+export async function getUserByUsername(username: string): Promise<User | null> {
+  const users = await getUsers();
+  return users.find((user) => user.name === username) ?? null;
+}
+
+export async function getUserById(id: string): Promise<User | null> {
+  const users = await getUsers();
+  return users.find((user) => user.id === id) ?? null;
+}
+
+export async function getQuestions() {
+  return await _getQuestions().then((questionMap) => {
+    const plainQuestions = Object.entries(questionMap).map(([_, question]) => question);
+    return plainQuestions.slice().sort(compareTimestamp("decs"));
+  });
+}
+
+export async function getQuestionGroupsByUserId(userId: User["id"]) {
+  const questions = await getQuestions();
+
+  return questions.reduce<Record<"answered" | "unanswered", Question[]>>(
+    (res, question) => {
+      if (question.optionOne.votes.includes(userId) || question.optionTwo.votes.includes(userId)) {
+        res.answered.push(question);
+      } else {
+        res.unanswered.push(question);
+      }
+
+      return res;
+    },
+    {
+      answered: [],
+      unanswered: [],
+    }
+  );
+}
+
+const compareTimestamp = (order: "asc" | "decs") => (a: Question, b: Question) =>
+  (order === "asc" ? 1 : -1) * (a.timestamp - b.timestamp);
+
+export async function getQuestionById(id: string): Promise<Question | null> {
+  return (await _getQuestions())[id] ?? null;
+}
+//#endregion

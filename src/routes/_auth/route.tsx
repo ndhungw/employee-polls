@@ -1,7 +1,7 @@
+import { getUserById } from "@/_DATA";
 import { sleep } from "@/lib/utils";
 import { useAuthContext } from "@/modules/auth/AuthContext";
 import { getStoredUserId } from "@/modules/auth/AuthStore";
-import { getUserById } from "@/modules/auth/api/getExistingUsers";
 import AuthLayout from "@/modules/shared/layout/AuthLayout";
 import { createFileRoute, Outlet, redirect, useRouter } from "@tanstack/react-router";
 

@@ -1,3 +1,4 @@
+import { getExistingUsernames, getUserByUsername } from "@/_DATA";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -32,7 +33,6 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAuthContext } from "../auth/AuthContext";
-import { getExistingUsernames, getUserByUsername } from "../auth/api/getExistingUsers";
 
 const Route = getRouteApi("/login");
 

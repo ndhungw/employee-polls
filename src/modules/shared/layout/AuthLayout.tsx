@@ -1,14 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import {
-  //
-  CircleUser,
-  Home,
-  LeafyGreen,
-  Menu,
-  Package,
-  Package2,
-} from "lucide-react";
+import { ChevronDown, Home, LeafyGreen, Menu, Package, Package2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +29,7 @@ const routes = [
     exact: true,
   },
   {
-    path: "/polls/create",
+    path: "/add",
     label: "New poll",
     Icon: Package,
     exact: true,
@@ -131,16 +123,13 @@ const AuthLayout = ({
             <div className="w-full flex-1"></div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="icon" className="rounded-full">
-                  <CircleUser className="h-5 w-5" />
-                  <span className="sr-only">Toggle user menu</span>
+                <Button variant={"ghost"} size={"sm"}>
+                  Hello, {user?.name}
+                  <ChevronDown />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuLabel>{user?.id}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
               </DropdownMenuContent>

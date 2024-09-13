@@ -1,9 +1,9 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import "./style/globals.css";
 
 // Import the generated route tree
+import LoadingOverlay from "./components/LoadingOverlay";
 import { AuthProvider, useAuthContext } from "./modules/auth/AuthContext";
 import { routeTree } from "./routeTree.gen";
 import { RootRouteWithContext } from "./types/router";
@@ -16,6 +16,11 @@ const defaultRouteContext = {
 const router = createRouter({
   routeTree,
   context: defaultRouteContext,
+  defaultPendingComponent: () => <LoadingOverlay />,
+  defaultErrorComponent: () => <div>Unexpected error!</div>,
+  defaultNotFoundComponent: () => <div>Not found!</div>,
+  defaultPendingMinMs: 500,
+  defaultPendingMs: 500,
 });
 
 // Register the router instance for type safety
@@ -50,8 +55,8 @@ const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    <StrictMode>
-      <App />
-    </StrictMode>,
+    <App />
+    // <StrictMode>
+    // </StrictMode>,
   );
 }
