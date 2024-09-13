@@ -3,8 +3,10 @@ import ReactDOM from "react-dom/client";
 import "./style/globals.css";
 
 // Import the generated route tree
+import { Provider } from "react-redux";
+import { store } from "./redux/app/store";
 import LoadingOverlay from "./components/LoadingOverlay";
-import { AuthProvider, useAuthContext } from "./modules/auth/AuthContext";
+import { AuthProvider, useAuthContext } from "./auth/AuthContext";
 import { routeTree } from "./routeTree.gen";
 import { RootRouteWithContext } from "./types/router";
 
@@ -44,9 +46,11 @@ function InnerApp() {
 
 function App() {
   return (
-    <AuthProvider>
-      <InnerApp />
-    </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <InnerApp />
+      </AuthProvider>
+    </Provider>
   );
 }
 

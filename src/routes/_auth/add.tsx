@@ -1,4 +1,3 @@
-import { _saveQuestion } from "@/_DATA";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,7 +9,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useAuthContext } from "@/modules/auth/AuthContext";
+import { useAuthContext } from "@/auth/AuthContext";
+import { useAppDispatch } from "@/redux/app/hook";
+import { appActions } from "@/redux/slices/appSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFileRoute } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
@@ -40,15 +41,19 @@ function AddRoute() {
   });
 
   const { toast } = useToast();
+
+  const dispatch = useAppDispatch();
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
     if (!user) return;
-    const res = await _saveQuestion({
-      author: user.id,
-      ...values,
-    });
+    const res = dispatch(
+      appActions.saveQuestion({
+        author: user.id,
+        ...values,
+      })
+    );
     toast({
       title: "Create poll successfully!",
       description: (

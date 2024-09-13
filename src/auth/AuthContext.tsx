@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import LoadingOverlay from "@/components/LoadingOverlay";
 import { sleep } from "@/lib/utils";
-import { User } from "@/types/user";
+import { User } from "@/types/app";
 import {
   createContext,
   Dispatch,

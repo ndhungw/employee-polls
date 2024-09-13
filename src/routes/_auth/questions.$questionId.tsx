@@ -1,14 +1,13 @@
-import { _saveQuestionAnswer } from "@/_DATA";
-import { getQuestionById, getUserByUsername } from "@/_DATA";
+import { useAuthContext } from "@/auth/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useAuthContext } from "@/modules/auth/AuthContext";
-import { VotingOption } from "@/types/question";
-import { Option } from "@/types/user";
+import { useAppDispatch } from "@/redux/app/hook";
+import { getQuestionById, getUserByUsername } from "@/redux/getters";
+import { appActions } from "@/redux/slices/appSlice";
+import { Option, VotingOption } from "@/types/app";
 import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
 import { CircleCheckBigIcon } from "lucide-react";
-
 export const Route = createFileRoute("/_auth/questions/$questionId")({
   loader: async ({ params: { questionId } }) => {
     const question = await getQuestionById(questionId);
@@ -31,15 +30,18 @@ function QuestionDetail() {
   const router = useRouter();
   const { user } = useAuthContext();
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
 
   const onVote = (option: Option) => async () => {
     if (!user) return;
 
-    const isSucceeded = await _saveQuestionAnswer({
-      authedUser: user.id,
-      qid: question.id,
-      answer: option,
-    });
+    const isSucceeded = dispatch(
+      appActions.saveQuestionAnswer({
+        authedUser: user.id,
+        qid: question.id,
+        answer: option,
+      })
+    );
 
     if (isSucceeded) {
       toast({

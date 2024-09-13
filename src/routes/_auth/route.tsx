@@ -1,8 +1,8 @@
-import { getUserById } from "@/_DATA";
 import { sleep } from "@/lib/utils";
-import { useAuthContext } from "@/modules/auth/AuthContext";
-import { getStoredUserId } from "@/modules/auth/AuthStore";
-import AuthLayout from "@/modules/shared/layout/AuthLayout";
+import { useAuthContext } from "@/auth/AuthContext";
+import { getStoredUserId } from "@/auth/AuthStore";
+import AuthLayout from "@/layout/AuthLayout";
+import { getUserById } from "@/redux/getters";
 import { createFileRoute, Outlet, redirect, useRouter } from "@tanstack/react-router";
 
 class UserNotFound extends Error {}

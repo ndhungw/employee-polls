@@ -1,4 +1,4 @@
-import { AuthContextValue } from "@/modules/auth/AuthContext";
+import { AuthContextValue } from "@/auth/AuthContext";
 
 export type RootRouteWithContext = {
   auth: AuthContextValue;

@@ -1,5 +1,4 @@
-import { Question } from "./types/question";
-import { Option, User } from "./types/user";
+import { Option, Question, User } from "./types/app";
 
 let users: Record<string, User> = {
   sarahedo: {
@@ -147,13 +146,13 @@ export function _getQuestions(): Promise<typeof questions> {
   });
 }
 
-type RawQuestion = {
+export type RawQuestion = {
   optionOneText: string;
   optionTwoText: string;
   author: string;
 };
 
-function formatQuestion({
+export function formatQuestion({
   optionOneText,
   optionTwoText,
   author,
@@ -242,59 +241,3 @@ export function _saveQuestionAnswer({
     }, 500);
   });
 }
-
-//#region
-export async function getUsers() {
-  const usersMap = await _getUsers();
-  return Object.entries(usersMap).map(([_, user]) => user);
-}
-
-export async function getExistingUsernames(): Promise<User["name"][]> {
-  const users = await getUsers();
-  return users.map((user) => user.name);
-}
-
-export async function getUserByUsername(username: string): Promise<User | null> {
-  const users = await getUsers();
-  return users.find((user) => user.name === username) ?? null;
-}
-
-export async function getUserById(id: string): Promise<User | null> {
-  const users = await getUsers();
-  return users.find((user) => user.id === id) ?? null;
-}
-
-export async function getQuestions() {
-  return await _getQuestions().then((questionMap) => {
-    const plainQuestions = Object.entries(questionMap).map(([_, question]) => question);
-    return plainQuestions.slice().sort(compareTimestamp("decs"));
-  });
-}
-
-export async function getQuestionGroupsByUserId(userId: User["id"]) {
-  const questions = await getQuestions();
-
-  return questions.reduce<Record<"answered" | "unanswered", Question[]>>(
-    (res, question) => {
-      if (question.optionOne.votes.includes(userId) || question.optionTwo.votes.includes(userId)) {
-        res.answered.push(question);
-      } else {
-        res.unanswered.push(question);
-      }
-
-      return res;
-    },
-    {
-      answered: [],
-      unanswered: [],
-    }
-  );
-}
-
-const compareTimestamp = (order: "asc" | "decs") => (a: Question, b: Question) =>
-  (order === "asc" ? 1 : -1) * (a.timestamp - b.timestamp);
-
-export async function getQuestionById(id: string): Promise<Question | null> {
-  return (await _getQuestions())[id] ?? null;
-}
-//#endregion

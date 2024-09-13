@@ -1,4 +1,3 @@
-import { getUsers } from "@/_DATA";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
   Table,
@@ -8,7 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { User } from "@/types/user";
+import { getUsers } from "@/redux/getters";
+import { User } from "@/types/app";
 import { createFileRoute } from "@tanstack/react-router";
 
 const getNumberOfAnsweredOfUser = (user: User) => Object.keys(user.answers).length;

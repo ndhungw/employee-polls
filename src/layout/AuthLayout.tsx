@@ -12,13 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { AuthContextValue, useAuthContext } from "@/modules/auth/AuthContext";
+import { AuthContextValue, useAuthContext } from "@/auth/AuthContext";
 import { useState } from "react";
 
 const routes = [
   {
-    path: "/dashboard",
-    label: "Dashboard",
+    path: "/",
+    label: "Home",
     Icon: Home,
     exact: true,
   },

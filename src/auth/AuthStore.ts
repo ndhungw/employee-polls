@@ -1,4 +1,4 @@
-import { User } from "@/types/user";
+import { User } from "@/types/app";
 
 const key = "hungnd73.employee-polls-app.auth.user";
 

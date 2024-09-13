@@ -1,18 +1,19 @@
-import { getQuestionGroupsByUserId } from "@/_DATA";
 import { Button } from "@/components/ui/button";
-import { Question } from "@/types/question";
+import { Question } from "@/types/app";
 import { Link } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-import { useAuthContext } from "@/modules/auth/AuthContext";
+import { useAuthContext } from "@/auth/AuthContext";
+import { getQuestionGroupsByUserId } from "@/redux/getters";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_auth/dashboard")({
+export const Route = createFileRoute("/_auth/")({
   component: DashboardPage,
 });
 function useQuestionGroup(userId: string | null | undefined) {
   const [loading, setLoading] = useState(false);
+
   const [questionGroup, setQuestionGroup] = useState<
     Awaited<ReturnType<typeof getQuestionGroupsByUserId>>
   >({
