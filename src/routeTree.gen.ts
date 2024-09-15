@@ -101,15 +101,86 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  AuthRouteRoute: AuthRouteRoute.addChildren({
-    AuthAddRoute,
-    AuthLeaderboardRoute,
-    AuthIndexRoute,
-    AuthQuestionsQuestionIdRoute,
-  }),
-  LoginRoute,
-})
+interface AuthRouteRouteChildren {
+  AuthAddRoute: typeof AuthAddRoute
+  AuthLeaderboardRoute: typeof AuthLeaderboardRoute
+  AuthIndexRoute: typeof AuthIndexRoute
+  AuthQuestionsQuestionIdRoute: typeof AuthQuestionsQuestionIdRoute
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthAddRoute: AuthAddRoute,
+  AuthLeaderboardRoute: AuthLeaderboardRoute,
+  AuthIndexRoute: AuthIndexRoute,
+  AuthQuestionsQuestionIdRoute: AuthQuestionsQuestionIdRoute,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
+export interface FileRoutesByFullPath {
+  '': typeof AuthRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/add': typeof AuthAddRoute
+  '/leaderboard': typeof AuthLeaderboardRoute
+  '/': typeof AuthIndexRoute
+  '/questions/$questionId': typeof AuthQuestionsQuestionIdRoute
+}
+
+export interface FileRoutesByTo {
+  '/login': typeof LoginRoute
+  '/add': typeof AuthAddRoute
+  '/leaderboard': typeof AuthLeaderboardRoute
+  '/': typeof AuthIndexRoute
+  '/questions/$questionId': typeof AuthQuestionsQuestionIdRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_auth/add': typeof AuthAddRoute
+  '/_auth/leaderboard': typeof AuthLeaderboardRoute
+  '/_auth/': typeof AuthIndexRoute
+  '/_auth/questions/$questionId': typeof AuthQuestionsQuestionIdRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | ''
+    | '/login'
+    | '/add'
+    | '/leaderboard'
+    | '/'
+    | '/questions/$questionId'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/login' | '/add' | '/leaderboard' | '/' | '/questions/$questionId'
+  id:
+    | '__root__'
+    | '/_auth'
+    | '/login'
+    | '/_auth/add'
+    | '/_auth/leaderboard'
+    | '/_auth/'
+    | '/_auth/questions/$questionId'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 
