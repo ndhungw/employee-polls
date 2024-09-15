@@ -206,38 +206,54 @@ export function _saveQuestionAnswer({
   return new Promise((resolve, reject) => {
     if (!authedUser || !qid || !answer) {
       reject("Please provide authedUser, qid, and answer");
+      return;
+    }
+
+    if (!users[authedUser]) {
+      reject(`Not found the authenticated user called ${authedUser}`);
+      return;
+    }
+
+    if (!questions[qid]) {
+      reject(`Not found the question with id ${qid}`);
+      return;
     }
 
     setTimeout(() => {
-      users = {
-        ...users,
-        [authedUser]: {
-          ...users[authedUser],
-          answers: {
-            ...users[authedUser].answers,
-            [qid]: answer,
+      try {
+        users = {
+          ...users,
+          [authedUser]: {
+            ...users[authedUser],
+            answers: {
+              ...users[authedUser].answers,
+              [qid]: answer,
+            },
           },
-        },
-      };
+        };
 
-      const theOtherOneAnswer = answer !== "optionOne" ? "optionOne" : "optionTwo";
+        const theOtherOneAnswer = answer !== "optionOne" ? "optionOne" : "optionTwo";
 
-      questions = {
-        ...questions,
-        [qid]: {
-          ...questions[qid],
-          [answer]: {
-            ...questions[qid][answer],
-            votes: [...new Set(questions[qid][answer].votes.concat([authedUser]))],
+        questions = {
+          ...questions,
+          [qid]: {
+            ...questions[qid],
+            [answer]: {
+              ...questions[qid][answer],
+              votes: [...new Set(questions[qid][answer].votes.concat([authedUser]))],
+            },
+            [theOtherOneAnswer]: {
+              ...questions[qid][theOtherOneAnswer],
+              votes: questions[qid][theOtherOneAnswer].votes.filter((user) => user !== authedUser),
+            },
           },
-          [theOtherOneAnswer]: {
-            ...questions[qid][theOtherOneAnswer],
-            votes: questions[qid][theOtherOneAnswer].votes.filter((user) => user !== authedUser),
-          },
-        },
-      };
+        };
 
-      resolve(true);
+        resolve(true);
+      } catch (error) {
+        console.log("_saveQuestionAnswer error:", error);
+        throw error;
+      }
     }, 500);
   });
 }

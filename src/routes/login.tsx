@@ -45,12 +45,18 @@ export const Route = createFileRoute("/login")({
       throw redirect({ to: search.redirect || fallbackPath });
     }
   },
-  component: () => (
+  component: LoginPage,
+});
+
+function LoginPage() {
+  return (
     <div className="h-full container flex items-center justify-center">
       <LoginForm />
     </div>
-  ),
-});
+  );
+}
+
+//------------
 
 const FormSchema = z.object({
   username: z.string({
@@ -155,7 +161,7 @@ export function LoginForm() {
               />
             </CardContent>
             <CardFooter>
-              <Button className="w-full" type="submit">
+              <Button className="w-full" type="submit" data-testid='btn--sign-in'>
                 {isLoggingIn ? "Loading..." : "Sign in"}
               </Button>
             </CardFooter>
