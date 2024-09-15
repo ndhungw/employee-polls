@@ -3,11 +3,19 @@
 ## Install and start
 
 ```bash
-# install packages
+# Install packages
+# - using pnpm
 pnpm install
+# - using npm
+npm install
 
-# start the app
-pnpm dev
+# -------
+
+# Start the app
+# - using pnpm
+pnpm start
+# - using npm
+npm start
 ```
 
 ## Login
