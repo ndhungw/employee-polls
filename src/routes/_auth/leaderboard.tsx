@@ -47,8 +47,15 @@ function LeaderboardRoute() {
           {rankedUsers.map((user) => (
             <TableRow key={user.id}>
               <TableCell className="font-medium">
-                <div className="text-base text-primary">{user.name}</div>
-                <div className="text-muted-foreground">@{user.id}</div>
+                <div className="flex items-center gap-2">
+                  <Avatar>
+                    <AvatarImage src={user.avatarURL} />
+                  </Avatar>
+                  <div>
+                    <div className="text-base text-primary">{user.name}</div>
+                    <div className="text-muted-foreground">@{user.id}</div>
+                  </div>
+                </div>
               </TableCell>
               <TableCell className="text-center">{getNumberOfAnsweredOfUser(user)}</TableCell>
               <TableCell className="text-center">{user.questions.length}</TableCell>
@@ -56,34 +63,6 @@ function LeaderboardRoute() {
           ))}
         </TableBody>
       </Table>
-    </div>
-  );
-  return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Answered</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rankedUsers.map((user) => (
-            <tr key={user.id}>
-              <th>
-                <Avatar>
-                  <AvatarImage src={user.avatarURL ?? ""} />
-                </Avatar>
-                <div>{user.name}</div>
-                <div>{user.id}</div>
-              </th>
-              <td>{getNumberOfAnsweredOfUser(user)}</td>
-              <td>{user.questions.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }

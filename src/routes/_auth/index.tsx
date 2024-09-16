@@ -1,12 +1,13 @@
+import { useAuthContext } from "@/auth/AuthContext";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Toggle } from "@/components/ui/toggle";
+import { getQuestionGroupsByUserId } from "@/redux/getters";
 import { Question } from "@/types/app";
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-
-import { useAuthContext } from "@/auth/AuthContext";
-import { getQuestionGroupsByUserId } from "@/redux/getters";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth/")({
   component: DashboardPage,
@@ -38,27 +39,42 @@ function useQuestionGroup(userId: string | null | undefined) {
 function DashboardPage() {
   const { user } = useAuthContext();
   const { loading, questionGroup } = useQuestionGroup(user?.id);
+  const [questionGroupType, setQuestionGroupType] = useState<"unanswered" | "answered">(
+    "unanswered"
+  );
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       {loading && "Loading..."}
       {!loading && (
-        <div className="space-y-12">
-          {questionGroup.unanswered.length > 0 && (
+        <>
+          <div className="flex items-center gap-3">
+            <Label htmlFor="questionGroupType">Answered questions</Label>
+            <Switch
+              id="questionGroupType"
+              checked={questionGroupType === "answered"}
+              onCheckedChange={(checked) => {
+                setQuestionGroupType(checked ? "answered" : "unanswered");
+              }}
+            />
+          </div>
+
+          {questionGroupType === "unanswered" && questionGroup.unanswered.length > 0 && (
             <QuestionsContainer title="Unanswered Questions">
               {questionGroup.unanswered.map((q) => (
                 <QuestionCard key={q.id} {...q} />
               ))}
             </QuestionsContainer>
           )}
-          {questionGroup.answered.length > 0 && (
+
+          {questionGroupType === "answered" && questionGroup.answered.length > 0 && (
             <QuestionsContainer title="Answered Questions">
               {questionGroup.answered.map((q) => (
                 <QuestionCard key={q.id} {...q} />
               ))}
             </QuestionsContainer>
           )}
-        </div>
+        </>
       )}
     </main>
   );

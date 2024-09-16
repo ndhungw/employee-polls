@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAppDispatch } from "@/redux/app/hook";
-import { getQuestionById, getUserByUsername } from "@/redux/getters";
+import { getQuestionById, getUserById } from "@/redux/getters";
 import { appActions } from "@/redux/slices/appSlice";
 import { Option, VotingOption } from "@/types/app";
 import { createFileRoute, notFound, useRouter } from "@tanstack/react-router";
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_auth/questions/$questionId")({
     if (!question) {
       throw notFound();
     }
-    const author = await getUserByUsername(question.author);
+    const author = await getUserById(question.author);
     return { question, author };
   },
   component: QuestionDetail,
@@ -23,6 +23,7 @@ export const Route = createFileRoute("/_auth/questions/$questionId")({
 
 function QuestionDetail() {
   const { question, author } = Route.useLoaderData();
+  console.log("QuestionDetail  author:", author);
   const optionOneVotes = question.optionOne.votes;
   const optionTwoVotes = question.optionTwo.votes;
   const totalVoteCount = optionOneVotes.length + optionTwoVotes.length;

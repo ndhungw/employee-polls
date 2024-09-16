@@ -1,3 +1,4 @@
+import { useAuthContext } from "@/auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -9,11 +10,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useAuthContext } from "@/auth/AuthContext";
 import { useAppDispatch } from "@/redux/app/hook";
 import { appActions } from "@/redux/slices/appSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -44,6 +44,8 @@ function AddRoute() {
 
   const dispatch = useAppDispatch();
 
+  const router = useRouter();
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!user) return;
     const res = dispatch(
@@ -52,6 +54,11 @@ function AddRoute() {
         ...values,
       })
     );
+
+    router.navigate({
+      to: "/",
+    });
+
     toast({
       title: "Create poll successfully!",
       description: (

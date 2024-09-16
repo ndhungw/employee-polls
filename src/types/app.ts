@@ -6,7 +6,7 @@ export type User = {
   id: string;
   password: string;
   name: string;
-  avatarURL: null;
+  avatarURL: string;
   questions: string[];
   answers: AnswerMap;
 };

@@ -161,7 +161,7 @@ export function LoginForm() {
               />
             </CardContent>
             <CardFooter>
-              <Button className="w-full" type="submit" data-testid='btn--sign-in'>
+              <Button className="w-full" type="submit" data-testid="btn--sign-in">
                 {isLoggingIn ? "Loading..." : "Sign in"}
               </Button>
             </CardFooter>

@@ -1,5 +1,7 @@
 # Employee polls app
 
+This is Employee polls - a web app that lets an employee create polls for coworkers.
+
 ## Install and start
 
 ```bash

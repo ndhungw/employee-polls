@@ -5,7 +5,7 @@ let users: Record<string, User> = {
     id: "sarahedo",
     password: "password123",
     name: "Sarah Edo",
-    avatarURL: null,
+    avatarURL: "/avatars/sarahedo.svg",
     answers: {
       "8xf0y6ziyjabvozdd253nd": "optionOne",
       "6ni6ok3ym7mf1p33lnez": "optionOne",
@@ -18,7 +18,7 @@ let users: Record<string, User> = {
     id: "tylermcginnis",
     password: "abc321",
     name: "Tyler McGinnis",
-    avatarURL: null,
+    avatarURL: "/avatars/tylermcginnis.svg",
     answers: {
       vthrdm985a262al8qx3do: "optionOne",
       xj352vofupe1dqz9emx13r: "optionTwo",
@@ -29,7 +29,7 @@ let users: Record<string, User> = {
     id: "mtsamis",
     password: "xyz123",
     name: "Mike Tsamis",
-    avatarURL: null,
+    avatarURL: "/avatars/mtsamis.svg",
     answers: {
       xj352vofupe1dqz9emx13r: "optionOne",
       vthrdm985a262al8qx3do: "optionTwo",
@@ -41,7 +41,7 @@ let users: Record<string, User> = {
     id: "zoshikanlu",
     password: "pass246",
     name: "Zenobia Oshikanlu",
-    avatarURL: null,
+    avatarURL: "/avatars/zoshikanlu.svg",
     answers: {
       xj352vofupe1dqz9emx13r: "optionOne",
     },
@@ -129,6 +129,9 @@ let questions: Record<string, Question> = {
     },
   },
 };
+
+export const initUsers = { ...users };
+export const initQuestions = { ...questions };
 
 function generateUID() {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
